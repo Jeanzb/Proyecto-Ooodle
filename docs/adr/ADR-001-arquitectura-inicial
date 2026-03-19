@@ -216,16 +216,17 @@ Es clave porque protege el núcleo funcional del juego. También garantiza que l
 ## Relación con el modelo de dominio inicial
 Como punto de partida del dominio, se identificó la entidad `partidas`, con atributos preliminares como:
 
-- `id`
-- `usuario_id`
-- `dificultad`
-- `estado`
-- `intentos_usados`
-- `puntaje`
-- `played_at`
-
-Este modelo se considera **inicial** y está sujeto a evolución en decisiones posteriores. Dependiendo de la consolidación de reglas del negocio, podrían incorporarse entidades adicionales como `intentos`, `ecuaciones` o `usuarios`.
-
+entity "partidas" as partidas {
+  * id : uid <<PK>>
+  --
+  usuario_id : uid <<NULL>>
+  dificultad : varchar(10)
+  estado : varchar(12)
+  intentos_usados : int
+  puntaje : int
+  played_at : timestamptz
+}
+Este modelo se considera **inicial** y está sujeto a evolución en decisiones posteriores. Dependiendo de la consolidación de reglas del negocio.
 ---
 
 ## Estructura inicial derivada
