@@ -1,0 +1,265 @@
+# ADR-001 — Arquitectura inicial de Ooodle
+
+- **Estado:** En elaboración
+- **Fecha:** 2026-03-17
+- **Responsables:** Equipo Ooodle
+- **Versión:** 0.2
+
+## Título
+**Adopción de una arquitectura monorepo con frontend y backend desacoplados, backend multicapa y persistencia relacional para Ooodle**
+
+## Contexto general
+Ooodle es una aplicación web tipo juego inspirada en Wordle, en la que el jugador debe adivinar una ecuación matemática en un número limitado de intentos. Desde los primeros sprints se identificó la necesidad de contar con una interfaz interactiva para representar el tablero, una capa de servidor donde se ejecute la lógica del juego y una base de datos para registrar la información de las partidas.
+
+En el avance ya ejecutado del proyecto se configuró el frontend en una carpeta independiente (`/frontend`) utilizando React, Vite y Tailwind CSS. También se construyó un tablero visual con componentes como `Grid`, `Row` y `Cell`, y se aseguró que el tablero mostrara al menos seis filas. En paralelo, se creó un backend en una carpeta independiente (`/backend`) con Node.js y Express, se instaló CORS y se implementó un endpoint de prueba. Además, se definió una base de datos relacional inicial para persistir información del juego.
+
+A partir de este punto, el equipo necesitó formalizar una arquitectura que explicara no solo qué tecnologías se eligieron, sino por qué se eligieron, qué problema resolvía cada decisión y qué consecuencias trae cada una para la evolución del sistema.
+
+---
+
+## Decisión 1: Organizar el proyecto como monorepo
+
+### Contexto de la decisión
+El proyecto requiere trabajar de manera paralela sobre frontend, backend y documentación técnica. Ya existían carpetas separadas para frontend y backend, lo que mostraba que la organización natural del sistema no era una única aplicación compacta, sino un repositorio que agrupa distintos componentes del producto.
+
+### Decisión tomada
+Se adopta una **estructura monorepo** para organizar todo el proyecto en un único repositorio, con una separación explícita entre:
+
+- `frontend/`
+- `backend/`
+- `docs/`
+
+### Por qué esta decisión es clave
+Esta decisión es clave porque define la base organizativa del proyecto completo. Permite tener una sola fuente de verdad para código y documentación, facilita el trabajo colaborativo y deja clara la separación entre interfaz, lógica del negocio y artefactos académicos.
+
+### Consecuencias
+**Positivas**
+- Mejora la organización del proyecto.
+- Facilita el control de versiones de todo el sistema en un solo lugar.
+- Permite que el equipo trabaje en frontend, backend y documentación sin mezclar responsabilidades.
+- Favorece la trazabilidad académica y técnica del proyecto.
+
+**Trade-offs**
+- Requiere disciplina para mantener orden entre carpetas y dependencias.
+- Obliga a definir convenciones claras desde etapas tempranas.
+
+---
+
+## Decisión 2: Separar frontend y backend mediante una arquitectura desacoplada
+
+### Contexto de la decisión
+Ooodle no es una página estática; es una aplicación interactiva con reglas del juego, validaciones matemáticas y persistencia. Esto hace inconveniente mezclar interfaz, reglas del juego y acceso a datos en un solo bloque de código.
+
+### Decisión tomada
+Se decide trabajar con una **arquitectura desacoplada frontend-backend**, donde:
+
+- el frontend se encarga de la experiencia del usuario,
+- el backend centraliza la lógica del juego, las validaciones, la exposición de endpoints y la comunicación con la base de datos.
+
+### Por qué esta decisión es clave
+Es clave porque protege la consistencia del sistema y evita que la lógica principal del juego dependa exclusivamente del cliente. También deja la base lista para escalar hacia nuevas funcionalidades como ranking, historial de partidas o modos de juego.
+
+### Consecuencias
+**Positivas**
+- Menor acoplamiento entre interfaz y negocio.
+- Mayor mantenibilidad.
+- Mejor preparación para crecer funcionalmente.
+- Facilita pruebas y evolución por capas.
+
+**Trade-offs**
+- Requiere definir contratos de API.
+- Introduce complejidad de integración entre cliente y servidor.
+
+---
+
+## Decisión 3: Usar React, Vite y Tailwind CSS en el frontend
+
+### Contexto de la decisión
+El proyecto necesitaba una interfaz dinámica capaz de representar un tablero de juego, responder a interacciones del usuario y actualizar visualmente el estado de cada intento. En los sprints iniciales ya se decidió crear el frontend en `/frontend`, inicializarlo con Vite y aplicar Tailwind CSS para estilos.
+
+### Decisión tomada
+Se decide usar:
+
+- **React** para construir la interfaz basada en componentes,
+- **Vite** como herramienta de desarrollo y construcción,
+- **Tailwind CSS** como sistema de estilos utilitarios.
+
+### Por qué esta decisión es clave
+Es clave porque el tablero del juego exige componentes reutilizables, manejo de estado y renderizado reactivo. React se adapta bien a ese modelo. Vite acelera el desarrollo local y Tailwind permite construir y ajustar rápidamente la interfaz sin una sobrecarga grande de CSS manual.
+
+### Consecuencias
+**Positivas**
+- Favorece la reutilización de componentes.
+- Permite una interfaz dinámica y mantenible.
+- Acelera el desarrollo local.
+- Reduce el tiempo de construcción visual del tablero.
+
+**Trade-offs**
+- Exige aprendizaje y disciplina en manejo de estado.
+- Tailwind puede aumentar la cantidad de clases visibles en el marcado.
+- Obliga a definir una organización clara de componentes.
+
+---
+
+## Decisión 4: Usar Node.js y Express para el backend
+
+### Contexto de la decisión
+El proyecto requería una capa de servidor para exponer endpoints, ejecutar validaciones y servir como base del motor matemático. En Sprint 2 se creó el backend, se inicializó el proyecto y se levantó un servidor con Express y CORS.
+
+### Decisión tomada
+Se decide construir el backend con:
+
+- **Node.js** como entorno de ejecución,
+- **Express** como framework para servidor y API REST.
+
+### Por qué esta decisión es clave
+Es clave porque el backend será responsable del flujo central del sistema: validación de ecuaciones, selección de la ecuación objetivo, gestión de partidas y comunicación con la base de datos. Express permite construir esta base de forma ligera y flexible.
+
+### Consecuencias
+**Positivas**
+- Permite crear rutas y middleware de manera simple.
+- Mantiene coherencia tecnológica al usar JavaScript tanto en frontend como en backend.
+- Facilita levantar rápidamente una API funcional.
+
+**Trade-offs**
+- Su flexibilidad requiere disciplina arquitectónica para evitar desorden.
+- No impone estructura por sí mismo, así que el equipo debe definirla explícitamente.
+
+---
+
+## Decisión 5: Organizar el backend con arquitectura multicapa
+
+### Contexto de la decisión
+Aunque en etapas tempranas existió una historia asociada a una “estructura MVC básica”, la evolución real del proyecto derivó en frontend y backend separados dentro de un monorepo. En ese contexto, describir toda la solución como MVC ya no representa fielmente la arquitectura global.
+
+### Decisión tomada
+Se decide organizar el backend mediante una **arquitectura multicapa**, separando responsabilidades en componentes como:
+
+- `routes`
+- `controllers`
+- `services`
+- `repositories`
+- `validators`
+- `config`
+- `middlewares`
+- `utils`
+
+### Por qué esta decisión es clave
+Es clave porque el backend no solo servirá rutas HTTP; también contendrá reglas de juego, validaciones matemáticas, acceso a persistencia y manejo de errores. Separar estas responsabilidades evita que toda la lógica quede acoplada en pocos archivos.
+
+### Consecuencias
+**Positivas**
+- Mejora la claridad técnica.
+- Facilita el mantenimiento y extensión del backend.
+- Permite distribuir responsabilidades de forma más ordenada.
+- Deja una base más seria para pruebas futuras.
+
+**Trade-offs**
+- Incrementa el esfuerzo inicial de diseño.
+- Introduce más carpetas y archivos desde etapas tempranas.
+
+---
+
+## Decisión 6: Usar PostgreSQL en Supabase para persistencia
+
+### Contexto de la decisión
+El sistema requiere registrar información de partidas, puntajes, dificultad, estado e intentos usados. Desde etapas anteriores ya se había planteado una base de datos relacional y una entidad inicial para representar partidas.
+
+### Decisión tomada
+Se decide utilizar **PostgreSQL**, administrado a través de **Supabase**, como solución principal de persistencia para el proyecto.
+
+### Por qué esta decisión es clave
+Es clave porque el dominio del juego contiene datos estructurados que se benefician de un modelo relacional. Además, la persistencia será necesaria para soportar partidas, resultados, historial y futuras expansiones del modelo.
+
+### Consecuencias
+**Positivas**
+- Permite almacenar información estructurada de manera consistente.
+- Facilita futuras relaciones entre partidas, intentos y posibles usuarios.
+- Deja una base sólida para ranking o historial.
+
+**Trade-offs**
+- Requiere modelado cuidadoso desde el inicio.
+- Puede obligar a ajustar el esquema conforme evolucionen las reglas del juego.
+
+---
+
+## Decisión 7: Centralizar la lógica del juego en el backend
+
+### Contexto de la decisión
+La ecuación objetivo y las reglas de validación no deberían quedar expuestas completamente en el navegador. Si el frontend concentra la lógica del juego, aumenta el riesgo de inconsistencias, duplicación de reglas y dificultad para controlar el flujo real de una partida.
+
+### Decisión tomada
+Se decide que el backend sea responsable de:
+
+- gestionar la ecuación objetivo,
+- validar ecuaciones enviadas por el jugador,
+- aplicar reglas del juego,
+- persistir el resultado de cada partida,
+- servir el estado necesario al frontend.
+
+### Por qué esta decisión es clave
+Es clave porque protege el núcleo funcional del juego. También garantiza que la validación sea única, coherente y controlada, independientemente del cliente que consuma la API.
+
+### Consecuencias
+**Positivas**
+- Mayor control sobre reglas del juego.
+- Menor exposición de lógica sensible.
+- Mayor consistencia entre partidas.
+- Facilita que el frontend permanezca enfocado en UI.
+
+**Trade-offs**
+- Aumenta la dependencia del backend para jugar.
+- Exige una integración frontend-backend bien diseñada.
+
+---
+
+## Relación con el modelo de dominio inicial
+Como punto de partida del dominio, se identificó la entidad `partidas`, con atributos preliminares como:
+
+- `id`
+- `usuario_id`
+- `dificultad`
+- `estado`
+- `intentos_usados`
+- `puntaje`
+- `played_at`
+
+Este modelo se considera **inicial** y está sujeto a evolución en decisiones posteriores. Dependiendo de la consolidación de reglas del negocio, podrían incorporarse entidades adicionales como `intentos`, `ecuaciones` o `usuarios`.
+
+---
+
+## Estructura inicial derivada
+A partir de estas decisiones, la estructura objetivo del proyecto queda planteada de la siguiente forma:
+
+```txt
+/ooodle
+├── frontend/
+├── backend/
+│   └── src/
+│       ├── config/
+│       ├── routes/
+│       ├── controllers/
+│       ├── services/
+│       ├── repositories/
+│       ├── validators/
+│       ├── middlewares/
+│       └── utils/
+└── docs/
+```
+
+---
+
+## Estado actual
+Este ADR se encuentra **en elaboración**. Las decisiones principales de arquitectura ya fueron identificadas, pero todavía quedan abiertos para validación en Sprint 3 los siguientes puntos:
+
+- mecanismo definitivo de generación o selección de ecuaciones,
+- contrato API completo entre frontend y backend,
+- ampliación del modelo de dominio,
+- estructura final del backend una vez se implemente el flujo real del juego.
+
+---
+
+## Artefactos relacionados
+- `docs/ADR-001-arquitectura-inicial.md`
+- `docs/modelo-dominio-inicial.puml`
+- `docs/arquitectura.md`
