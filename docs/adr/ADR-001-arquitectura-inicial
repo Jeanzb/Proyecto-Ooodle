@@ -1,262 +1,598 @@
-# ADR-001 — Arquitectura inicial de Ooodle
-
-- **Estado:** En elaboración
-- **Fecha:** 2026-03-17
-- **Responsables:** Equipo Ooodle
-- **Versión:** 0.2
-
-## Título
-**Adopción de una arquitectura monorepo con frontend y backend desacoplados, backend multicapa y persistencia relacional para Ooodle**
-
-## Contexto general
-Ooodle es una aplicación web tipo juego inspirada en Wordle, en la que el jugador debe adivinar una ecuación matemática en un número limitado de intentos. Desde los primeros sprints se identificó la necesidad de contar con una interfaz interactiva para representar el tablero, una capa de servidor donde se ejecute la lógica del juego y una base de datos para registrar la información de las partidas.
-
-En el avance ya ejecutado del proyecto se configuró el frontend en una carpeta independiente (`/frontend`) utilizando React, Vite y Tailwind CSS. También se construyó un tablero visual con componentes como `Grid`, `Row` y `Cell`, y se aseguró que el tablero mostrara al menos seis filas. En paralelo, se creó un backend en una carpeta independiente (`/backend`) con Node.js y Express, se instaló CORS y se implementó un endpoint de prueba. Además, se definió una base de datos relacional inicial para persistir información del juego.
-
-A partir de este punto, el equipo necesitó formalizar una arquitectura que explicara no solo qué tecnologías se eligieron, sino por qué se eligieron, qué problema resolvía cada decisión y qué consecuencias trae cada una para la evolución del sistema.
+Perfecto. Para GitHub en `Markdown`, te conviene una versión un poco más limpia y directa. Aquí la tienes lista para pegar en un archivo como `ADR-001-arquitectura-inicial.md`.
 
 ---
 
-## Decisión 1: Organizar el proyecto como monorepo
+# ADR-001: Arquitectura Inicial del Proyecto Ooodle
 
-### Contexto de la decisión
-El proyecto requiere trabajar de manera paralela sobre frontend, backend y documentación técnica. Ya existían carpetas separadas para frontend y backend, lo que mostraba que la organización natural del sistema no era una única aplicación compacta, sino un repositorio que agrupa distintos componentes del producto.
+## Estado
+Aceptado
 
-### Decisión tomada
-Se adopta una **estructura monorepo** para organizar todo el proyecto en un único repositorio, con una separación explícita entre:
+## Fecha
+2026-03-24
 
-- `frontend/`
-- `backend/`
-- `docs/`
+## Contexto
 
-### Por qué esta decisión es clave
-Esta decisión es clave porque define la base organizativa del proyecto completo. Permite tener una sola fuente de verdad para código y documentación, facilita el trabajo colaborativo y deja clara la separación entre interfaz, lógica del negocio y artefactos académicos.
+Ooodle es una aplicación web interactiva en la que el usuario debe descubrir cuatro números que satisfacen una expresión matemática de la forma:
 
-### Consecuencias
-**Positivas**
-- Mejora la organización del proyecto.
-- Facilita el control de versiones de todo el sistema en un solo lugar.
-- Permite que el equipo trabaje en frontend, backend y documentación sin mezclar responsabilidades.
-- Favorece la trazabilidad académica y técnica del proyecto.
-
-**Trade-offs**
-- Requiere disciplina para mantener orden entre carpetas y dependencias.
-- Obliga a definir convenciones claras desde etapas tempranas.
-
----
-
-## Decisión 2: Separar frontend y backend mediante una arquitectura desacoplada
-
-### Contexto de la decisión
-Ooodle no es una página estática; es una aplicación interactiva con reglas del juego, validaciones matemáticas y persistencia. Esto hace inconveniente mezclar interfaz, reglas del juego y acceso a datos en un solo bloque de código.
-
-### Decisión tomada
-Se decide trabajar con una **arquitectura desacoplada frontend-backend**, donde:
-
-- el frontend se encarga de la experiencia del usuario,
-- el backend centraliza la lógica del juego, las validaciones, la exposición de endpoints y la comunicación con la base de datos.
-
-### Por qué esta decisión es clave
-Es clave porque protege la consistencia del sistema y evita que la lógica principal del juego dependa exclusivamente del cliente. También deja la base lista para escalar hacia nuevas funcionalidades como ranking, historial de partidas o modos de juego.
-
-### Consecuencias
-**Positivas**
-- Menor acoplamiento entre interfaz y negocio.
-- Mayor mantenibilidad.
-- Mejor preparación para crecer funcionalmente.
-- Facilita pruebas y evolución por capas.
-
-**Trade-offs**
-- Requiere definir contratos de API.
-- Introduce complejidad de integración entre cliente y servidor.
-
----
-
-## Decisión 3: Usar React, Vite y Tailwind CSS en el frontend
-
-### Contexto de la decisión
-El proyecto necesitaba una interfaz dinámica capaz de representar un tablero de juego, responder a interacciones del usuario y actualizar visualmente el estado de cada intento. En los sprints iniciales ya se decidió crear el frontend en `/frontend`, inicializarlo con Vite y aplicar Tailwind CSS para estilos.
-
-### Decisión tomada
-Se decide usar:
-
-- **React** para construir la interfaz basada en componentes,
-- **Vite** como herramienta de desarrollo y construcción,
-- **Tailwind CSS** como sistema de estilos utilitarios.
-
-### Por qué esta decisión es clave
-Es clave porque el tablero del juego exige componentes reutilizables, manejo de estado y renderizado reactivo. React se adapta bien a ese modelo. Vite acelera el desarrollo local y Tailwind permite construir y ajustar rápidamente la interfaz sin una sobrecarga grande de CSS manual.
-
-### Consecuencias
-**Positivas**
-- Favorece la reutilización de componentes.
-- Permite una interfaz dinámica y mantenible.
-- Acelera el desarrollo local.
-- Reduce el tiempo de construcción visual del tablero.
-
-**Trade-offs**
-- Exige aprendizaje y disciplina en manejo de estado.
-- Tailwind puede aumentar la cantidad de clases visibles en el marcado.
-- Obliga a definir una organización clara de componentes.
-
----
-
-## Decisión 4: Usar Node.js y Express para el backend
-
-### Contexto de la decisión
-El proyecto requería una capa de servidor para exponer endpoints, ejecutar validaciones y servir como base del motor matemático. En Sprint 2 se creó el backend, se inicializó el proyecto y se levantó un servidor con Express y CORS.
-
-### Decisión tomada
-Se decide construir el backend con:
-
-- **Node.js** como entorno de ejecución,
-- **Express** como framework para servidor y API REST.
-
-### Por qué esta decisión es clave
-Es clave porque el backend será responsable del flujo central del sistema: validación de ecuaciones, selección de la ecuación objetivo, gestión de partidas y comunicación con la base de datos. Express permite construir esta base de forma ligera y flexible.
-
-### Consecuencias
-**Positivas**
-- Permite crear rutas y middleware de manera simple.
-- Mantiene coherencia tecnológica al usar JavaScript tanto en frontend como en backend.
-- Facilita levantar rápidamente una API funcional.
-
-**Trade-offs**
-- Su flexibilidad requiere disciplina arquitectónica para evitar desorden.
-- No impone estructura por sí mismo, así que el equipo debe definirla explícitamente.
-
----
-
-## Decisión 5: Organizar el backend con arquitectura multicapa
-
-### Contexto de la decisión
-Aunque en etapas tempranas existió una historia asociada a una “estructura MVC básica”, la evolución real del proyecto derivó en frontend y backend separados dentro de un monorepo. En ese contexto, describir toda la solución como MVC ya no representa fielmente la arquitectura global.
-
-### Decisión tomada
-Se decide organizar el backend mediante una **arquitectura multicapa**, separando responsabilidades en componentes como:
-
-- `routes`
-- `controllers`
-- `services`
-- `repositories`
-- `validators`
-- `config`
-- `middlewares`
-- `utils`
-
-### Por qué esta decisión es clave
-Es clave porque el backend no solo servirá rutas HTTP; también contendrá reglas de juego, validaciones matemáticas, acceso a persistencia y manejo de errores. Separar estas responsabilidades evita que toda la lógica quede acoplada en pocos archivos.
-
-### Consecuencias
-**Positivas**
-- Mejora la claridad técnica.
-- Facilita el mantenimiento y extensión del backend.
-- Permite distribuir responsabilidades de forma más ordenada.
-- Deja una base más seria para pruebas futuras.
-
-**Trade-offs**
-- Incrementa el esfuerzo inicial de diseño.
-- Introduce más carpetas y archivos desde etapas tempranas.
-
----
-
-## Decisión 6: Usar PostgreSQL en Supabase para persistencia
-
-### Contexto de la decisión
-El sistema requiere registrar información de partidas, puntajes, dificultad, estado e intentos usados. Desde etapas anteriores ya se había planteado una base de datos relacional y una entidad inicial para representar partidas.
-
-### Decisión tomada
-Se decide utilizar **PostgreSQL**, administrado a través de **Supabase**, como solución principal de persistencia para el proyecto.
-
-### Por qué esta decisión es clave
-Es clave porque el dominio del juego contiene datos estructurados que se benefician de un modelo relacional. Además, la persistencia será necesaria para soportar partidas, resultados, historial y futuras expansiones del modelo.
-
-### Consecuencias
-**Positivas**
-- Permite almacenar información estructurada de manera consistente.
-- Facilita futuras relaciones entre partidas, intentos y posibles usuarios.
-- Deja una base sólida para ranking o historial.
-
-**Trade-offs**
-- Requiere modelado cuidadoso desde el inicio.
-- Puede obligar a ajustar el esquema conforme evolucionen las reglas del juego.
-
----
-
-## Decisión 7: Centralizar la lógica del juego en el backend
-
-### Contexto de la decisión
-La ecuación objetivo y las reglas de validación no deberían quedar expuestas completamente en el navegador. Si el frontend concentra la lógica del juego, aumenta el riesgo de inconsistencias, duplicación de reglas y dificultad para controlar el flujo real de una partida.
-
-### Decisión tomada
-Se decide que el backend sea responsable de:
-
-- gestionar la ecuación objetivo,
-- validar ecuaciones enviadas por el jugador,
-- aplicar reglas del juego,
-- persistir el resultado de cada partida,
-- servir el estado necesario al frontend.
-
-### Por qué esta decisión es clave
-Es clave porque protege el núcleo funcional del juego. También garantiza que la validación sea única, coherente y controlada, independientemente del cliente que consuma la API.
-
-### Consecuencias
-**Positivas**
-- Mayor control sobre reglas del juego.
-- Menor exposición de lógica sensible.
-- Mayor consistencia entre partidas.
-- Facilita que el frontend permanezca enfocado en UI.
-
-**Trade-offs**
-- Aumenta la dependencia del backend para jugar.
-- Exige una integración frontend-backend bien diseñada.
-
----
-
-## Relación con el modelo de dominio inicial
-Como punto de partida del dominio, se identificó la entidad `partidas`, con atributos preliminares como:
-
-entity "partidas" as partidas {
-  * id : uid <<PK>>
-  --
-  usuario_id : uid <<NULL>>
-  dificultad : varchar(10)
-  estado : varchar(12)
-  intentos_usados : int
-  puntaje : int
-  played_at : timestamptz
-}
-Este modelo se considera **inicial** y está sujeto a evolución en decisiones posteriores. Dependiendo de la consolidación de reglas del negocio.
----
-
-## Estructura inicial derivada
-A partir de estas decisiones, la estructura objetivo del proyecto queda planteada de la siguiente forma:
-
-```txt
-/ooodle
-├── frontend/
-├── backend/
-│   └── src/
-│       ├── config/
-│       ├── routes/
-│       ├── controllers/
-│       ├── services/
-│       ├── repositories/
-│       ├── validators/
-│       ├── middlewares/
-│       └── utils/
-└── docs/
+```text
+A + B × C − D
 ```
 
+En las primeras iteraciones del proyecto, el desarrollo se enfocó en construir un prototipo funcional. Sin embargo, a medida que el alcance creció, fue necesario formalizar una arquitectura que permitiera:
+
+- separar claramente frontend y backend,
+- centralizar la lógica de negocio en el servidor,
+- evitar exponer la solución al cliente,
+- persistir resultados en base de datos,
+- y preparar el sistema para futuras extensiones como autenticación, ranking, historial y ORM.
+
+Este ADR documenta la arquitectura inicial adoptada y las decisiones principales relacionadas con la estructura, la lógica del juego y la persistencia.
+
+## Problema
+
+Se necesitaba definir una arquitectura que resolviera los siguientes puntos:
+
+- evitar que la lógica del juego residiera en el frontend,
+- impedir que la solución pudiera inspeccionarse desde el cliente,
+- organizar el backend de forma mantenible y escalable,
+- soportar persistencia de partidas terminadas,
+- y establecer una base técnica clara para la evolución futura del proyecto.
+
+## Decisión
+
+Se adopta una arquitectura cliente-servidor desacoplada, con un frontend web y un backend API REST.
+
+### Decisiones principales
+
+- El sistema se divide en `frontend` y `backend`.
+- El frontend solo presenta la interfaz y consume la API.
+- El backend es la fuente autoritativa de la lógica del juego.
+- La solución del juego se genera en el backend.
+- Las partidas activas se almacenan temporalmente en memoria.
+- Las partidas terminadas se persisten en Supabase.
+- El backend se organiza mediante una arquitectura en capas.
+- No se utiliza MVC clásico.
+
+## Estructura del backend
+
+La estructura oficial del backend es la siguiente:
+
+```text
+/backend
+├── src
+│   ├── app.js
+│   ├── server.js
+│   ├── config
+│   ├── routes
+│   ├── controllers
+│   ├── services
+│   ├── repositories
+│   ├── validators
+│   ├── middlewares
+│   └── utils
+├── package.json
+└── .env
+```
+
+## Responsabilidad de cada capa
+
+### `app.js`
+Configura Express, middlewares y rutas.
+
+### `server.js`
+Inicia el servidor.
+
+### `config`
+Centraliza configuración e infraestructura:
+- variables de entorno,
+- conexión a Supabase.
+
+### `routes`
+Declara los endpoints HTTP disponibles.
+
+### `controllers`
+Reciben las requests y delegan al servicio adecuado.
+
+### `services`
+Implementan la lógica de negocio.
+
+### `repositories`
+Encapsulan acceso a datos y persistencia.
+
+### `validators`
+Validan los payloads de entrada.
+
+### `middlewares`
+Centralizan lógica transversal como manejo de errores y validación.
+
+### `utils`
+Contienen funciones auxiliares puras y reutilizables.
+
+## Reglas de negocio
+
+### Modelo del juego
+El juego se basa en una expresión fija:
+
+```text
+A + B × C − D
+```
+
+El jugador debe descubrir los cuatro números correctos.
+
+### Dificultad
+Existen dos niveles de dificultad:
+
+- `normal`: números del 1 al 9
+- `dificil`: números del 1 al 12
+
+### Generación de solución
+- La solución se genera aleatoriamente al crear o reiniciar una partida.
+- La solución contiene exactamente 4 números.
+- Los 4 números de la solución son únicos.
+
+### Intentos
+- El jugador tiene un máximo de 6 intentos.
+- Cada intento contiene exactamente 4 números.
+- Los números deben ser enteros.
+- Los números deben estar dentro del rango de la dificultad.
+- No se permiten números repetidos en un mismo intento.
+
+### Evaluación matemática
+La expresión se evalúa con precedencia estándar:
+
+```text
+A + (B × C) − D
+```
+
+### Retroalimentación
+Cada posición del intento recibe uno de estos estados:
+
+- `correct`: número correcto en posición correcta
+- `present`: número existente en la solución pero en posición incorrecta
+- `absent`: número no presente en la solución
+
+El algoritmo consume coincidencias para evitar falsos positivos.
+
+### Fin de partida
+- Victoria: cuando las cuatro posiciones son `correct`
+- Derrota: cuando se agotan los seis intentos
+
+Al finalizar una partida, el backend intenta persistir el resultado en base de datos.
+
+## Flujo principal del sistema
+
+### Crear partida
+1. El frontend invoca `POST /api/game/new`
+2. El backend genera la solución
+3. El backend calcula el resultado objetivo
+4. El backend almacena la partida en memoria
+5. El backend devuelve:
+   - `gameId`
+   - `range`
+   - `targetResult`
+   - `equationLabel`
+   - `maxAttempts`
+   - `state`
+
+### Evaluar intento
+1. El frontend invoca `POST /api/game/guess`
+2. El backend valida el intento
+3. El backend calcula el resultado del intento
+4. El backend compara el intento con la solución
+5. El backend determina si hay victoria o derrota
+6. Si la partida termina, el backend persiste el resultado
+7. El backend devuelve el estado actualizado de la partida
+
+## Persistencia actual
+
+La persistencia actual usa Supabase sobre PostgreSQL. En el estado actual del proyecto, se persiste únicamente la tabla `partidas`.
+
+### Esquema SQL actual
+
+```sql
+drop table if exists public.intentos cascade;
+drop table if exists public.partidas cascade;
+drop table if exists public.ecuaciones cascade;
+drop table if exists public.usuarios cascade;
+
+create table public.partidas (
+  id uuid primary key default gen_random_uuid(),
+  usuario_id uuid null,
+  dificultad varchar(10) not null,
+  estado varchar(12) not null,
+  intentos_usados int not null,
+  puntaje int not null default 0,
+  played_at timestamptz not null default now(),
+  constraint partidas_dificultad_chk
+    check (dificultad in ('normal', 'dificil')),
+  constraint partidas_estado_chk
+    check (estado in ('victoria', 'derrota')),
+  constraint partidas_intentos_chk
+    check (intentos_usados between 1 and 6)
+);
+
+alter table public.partidas enable row level security;
+
+create policy "insertar partidas"
+on public.partidas
+for insert
+with check (true);
+
+create policy "leer partidas"
+on public.partidas
+for select
+using (true);
+```
+
+## Diagrama de clases del backend
+
+```plantuml
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+package "Backend" {
+
+  class App {
+    +use(middleware)
+    +use(route)
+  }
+
+  class Server {
+    +listen(port)
+  }
+
+  package "config" {
+    class EnvConfig {
+      +port : number
+      +supabaseUrl : string
+      +supabaseServiceRoleKey : string
+    }
+
+    class DbConfig {
+      +getSupabaseClient()
+    }
+  }
+
+  package "routes" {
+    class GameRoutes
+    class EquationRoutes
+    class HealthRoutes
+  }
+
+  package "controllers" {
+    class GameController {
+      +createGameController(req, res, next)
+      +restartGameController(req, res, next)
+      +guessController(req, res, next)
+    }
+
+    class EquationController {
+      +getEquationRulesController(req, res)
+    }
+  }
+
+  package "services" {
+    class GameService {
+      +MAX_ATTEMPTS : number
+      +createGame(range)
+      +getGameById(gameId)
+      +evaluateGuess(guess)
+      -shuffle(values)
+      -generateSolution(range)
+      -finalizeGame(game, state)
+    }
+
+    class EquationService {
+      +getEquationRules()
+    }
+
+    class ValidationService {
+      +validateAttempt(attempt, range)
+    }
+  }
+
+  package "repositories" {
+    class GameRepository {
+      -games : Map
+      +saveGame(game)
+      +findGameById(gameId)
+      +updateGame(game)
+      +insertFinishedGame(payload)
+    }
+
+    class EquationRepository {
+      +getEquationConfig()
+    }
+  }
+
+  package "validators" {
+    class GameValidator {
+      +VALID_RANGES : number[]
+      +validateCreateGameRequest(body)
+      +validateGuessRequest(body)
+    }
+
+    class EquationValidator {
+      +validateEquationRequest()
+    }
+  }
+
+  package "middlewares" {
+    class ErrorMiddleware {
+      +errorMiddleware(error, req, res, next)
+    }
+
+    class ValidateRequestMiddleware {
+      +validateRequest(validator)
+    }
+  }
+
+  package "utils" {
+    class EquationParser {
+      +evaluateEquation(values)
+      +serializeSolution(solution)
+    }
+
+    class EquationComparer {
+      +createStatuses(attempt, solution)
+    }
+
+    class ResponseBuilder {
+      +buildGameCreatedResponse(game, maxAttempts)
+      +buildGuessResponse(data)
+    }
+  }
+
+  class GameSession {
+    +gameId : string
+    +range : number
+    +solution : number[]
+    +targetResult : number
+    +attemptsUsed : number
+    +state : string
+    +createdAt : string
+  }
+
+  class Guess {
+    +gameId : string
+    +attempt : number[]
+  }
+
+  class MatchRecord {
+    +usuario_id : string
+    +dificultad : string
+    +estado : string
+    +intentos_usados : number
+    +puntaje : number
+  }
+}
+
+Server --> App
+App --> GameRoutes
+App --> EquationRoutes
+App --> HealthRoutes
+App --> ErrorMiddleware
+
+GameRoutes --> GameController
+EquationRoutes --> EquationController
+GameRoutes --> ValidateRequestMiddleware
+
+GameController --> GameValidator
+GameController --> GameService
+GameController --> ResponseBuilder
+GameController --> Guess
+
+EquationController --> EquationService
+
+GameService --> ValidationService
+GameService --> GameRepository
+GameService --> EquationParser
+GameService --> EquationComparer
+GameService --> GameSession
+GameService --> MatchRecord
+
+EquationService --> EquationRepository
+GameRepository --> DbConfig
+DbConfig --> EnvConfig
+
+GameRepository ..> GameSession : almacena
+GameRepository ..> MatchRecord : persiste
+GameService ..> Guess : procesa
+
+@enduml
+```
+
+## Diagrama de clases del frontend
+
+```plantuml
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+package "Frontend" {
+
+  class Main {
+    +render()
+  }
+
+  class App {
+    -range : number
+    -gameId : string
+    -targetResult : number
+    -equationLabel : string
+    -attempts : AttemptRow[]
+    -currentRow : number
+    -currentCol : number
+    -gameState : string
+    -error : string
+    -loading : boolean
+    -submitting : boolean
+    -flipRow : number
+    -solution : number[]
+    +startGame(nextRange)
+    +updateCurrentRow(updater)
+    +inputNumber(number)
+    +deleteNumber()
+    +selectCell(column)
+    +checkAttempt()
+    +restartGame(nextRange)
+  }
+
+  class GameHeader {
+    +onRestart()
+  }
+
+  class GameGrid {
+    +attempts : AttemptRow[]
+    +currentRow : number
+    +currentCol : number
+    +flipRow : number
+    +targetResult : number
+    +onSelectCell(column)
+    +onCheck()
+  }
+
+  class AttemptRowComponent {
+    +row : AttemptRow
+    +rowIndex : number
+    +isCurrentRow : boolean
+    +currentCol : number
+    +isFlipping : boolean
+    +targetResult : number
+    +onSelectCell(column)
+    +onCheck()
+  }
+
+  class NumberCell {
+    +value : number
+    +status : string
+    +isActive : boolean
+    +isFlipping : boolean
+    +flipDelay : number
+    +onClick()
+  }
+
+  class NumberKeypad {
+    +range : number
+    +currentAttempt : AttemptRow
+    +attempts : AttemptRow[]
+    +onInput(number)
+    +onDelete()
+    +onCheck()
+    +disabled : boolean
+  }
+
+  class ColorLegend
+
+  class GameModal {
+    +gameState : string
+    +solution : number[]
+    +targetResult : number
+    +attemptsUsed : number
+    +onRestart()
+  }
+
+  class GameHelpers {
+    +MAX_ATTEMPTS : number
+    +evaluateEquation(values)
+    +createEmptyRow()
+  }
+
+  class AttemptRow {
+    +cells : CellData[]
+    +result : number
+    +checked : boolean
+  }
+
+  class CellData {
+    +value : number
+    +status : string
+  }
+
+  class ApiGameResponse {
+    +gameId : string
+    +range : number
+    +targetResult : number
+    +equationLabel : string
+    +maxAttempts : number
+    +state : string
+  }
+
+  class ApiGuessResponse {
+    +attempt : number[]
+    +attemptResult : number
+    +statuses : string[]
+    +attemptsUsed : number
+    +attemptsLeft : number
+    +state : string
+    +won : boolean
+    +lost : boolean
+    +targetResult : number
+    +solution : number[]
+    +solutionLabel : string
+  }
+}
+
+Main --> App
+
+App --> GameHeader
+App --> GameGrid
+App --> NumberKeypad
+App --> ColorLegend
+App --> GameModal
+App --> GameHelpers
+
+App --> ApiGameResponse : consume
+App --> ApiGuessResponse : consume
+
+GameGrid --> AttemptRowComponent
+AttemptRowComponent --> NumberCell
+
+NumberKeypad --> AttemptRow
+AttemptRow --> CellData
+
+App ..> AttemptRow : administra estado
+App ..> CellData : actualiza estado
+GameHelpers ..> AttemptRow : crea
+GameHelpers ..> CellData : usa
+
+GameModal ..> AttemptRow : depende de resultados
+GameGrid ..> AttemptRow : renderiza
+AttemptRowComponent ..> CellData : renderiza
+
+@enduml
+```
+
+## Consecuencias
+
+### Positivas
+- mejora la mantenibilidad,
+- separa responsabilidades,
+- protege la lógica del juego,
+- facilita evolución futura,
+- y prepara el sistema para ORM y nuevas funcionalidades.
+
+### Negativas
+- introduce más capas y más archivos,
+- requiere disciplina documental,
+- mantiene un modelo híbrido temporal:
+  - partidas activas en memoria,
+  - partidas cerradas en base de datos.
+
+## Trabajo futuro
+
+- incorporar ORM formal,
+- modelar entidades persistentes adicionales,
+- agregar autenticación,
+- implementar ranking,
+- almacenar historial de intentos,
+- ampliar pruebas unitarias e integración.
+
 ---
 
-## Estado actual
-Este ADR se encuentra **en elaboración**. Las decisiones principales de arquitectura ya fueron identificadas, pero todavía quedan abiertos para validación en Sprint 3 los siguientes puntos:
-
-- mecanismo definitivo de generación o selección de ecuaciones,
-- contrato API completo entre frontend y backend,
-- ampliación del modelo de dominio,
-- estructura final del backend una vez se implemente el flujo real del juego.
-
----
-
+Si quieres, el siguiente paso te lo doy ya con formato de archivo listo para guardar como:
+- `docs/adr/ADR-001-arquitectura-inicial.md`
+- o directamente como `ARCHITECTURE.md`
