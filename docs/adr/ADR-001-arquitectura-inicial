@@ -1,8 +1,7 @@
-Perfecto. Para GitHub en `Markdown`, te conviene una versión un poco más limpia y directa. Aquí la tienes lista para pegar en un archivo como `ADR-001-arquitectura-inicial.md`.
 
 ---
 
-# ADR-001: Arquitectura Inicial del Proyecto Ooodle
+# ADR: Arquitectura del Proyecto Ooodle
 
 ## Estado
 Aceptado
@@ -593,6 +592,4 @@ AttemptRowComponent ..> CellData : renderiza
 
 ---
 
-Si quieres, el siguiente paso te lo doy ya con formato de archivo listo para guardar como:
-- `docs/adr/ADR-001-arquitectura-inicial.md`
-- o directamente como `ARCHITECTURE.md`
+
