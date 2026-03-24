@@ -13,9 +13,9 @@ Aceptado
 
 Ooodle es una aplicación web interactiva en la que el usuario debe descubrir cuatro números que satisfacen una expresión matemática de la forma:
 
-```text
+
 A + B × C − D
-```
+
 
 En las primeras iteraciones del proyecto, el desarrollo se enfocó en construir un prototipo funcional. Sin embargo, a medida que el alcance creció, fue necesario formalizar una arquitectura que permitiera:
 
@@ -56,7 +56,7 @@ Se adopta una arquitectura cliente-servidor desacoplada, con un frontend web y u
 
 La estructura oficial del backend es la siguiente:
 
-```text
+
 /backend
 ├── src
 │   ├── app.js
@@ -71,7 +71,7 @@ La estructura oficial del backend es la siguiente:
 │   └── utils
 ├── package.json
 └── .env
-```
+
 
 ## Responsabilidad de cada capa
 
@@ -112,9 +112,9 @@ Contienen funciones auxiliares puras y reutilizables.
 ### Modelo del juego
 El juego se basa en una expresión fija:
 
-```text
+
 A + B × C − D
-```
+
 
 El jugador debe descubrir los cuatro números correctos.
 
@@ -139,9 +139,9 @@ Existen dos niveles de dificultad:
 ### Evaluación matemática
 La expresión se evalúa con precedencia estándar:
 
-```text
+
 A + (B × C) − D
-```
+
 
 ### Retroalimentación
 Cada posición del intento recibe uno de estos estados:
