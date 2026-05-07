@@ -30,7 +30,7 @@ type respuesta_Validacion = estado_Publico_Juego & {
   retroalimentacion: string[];
 };
 
-export class juego_Logica {
+export class MotorPartida {
   private partida: Partida | null;
   private jugador: Jugador | null;
   private partidaDAO: PartidaDAO;

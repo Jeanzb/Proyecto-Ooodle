@@ -79,7 +79,7 @@ export class JugadorDAO implements DAO<Jugador> {
     return jugador;
   }
 
-  public async listar(): Promise<Jugador[]> {
+  public async listarJugador(): Promise<Jugador[]> {
     if (this.supabaseClient === null) {
       return Array.from(this.jugadoresPorId.values());
     }
