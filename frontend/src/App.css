@@ -1,42 +1,945 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600;700&display=swap");
+
+:root {
+  --background: #f6f2ea;
+  --foreground: #2d323d;
+  --card: #fdfcfa;
+  --muted: #ebe6dc;
+  --muted-foreground: #74798a;
+  --border: #ddd7cb;
+  --primary: #1b6f7b;
+  --primary-foreground: #fafafa;
+  --accent: #dbe6e8;
+  --destructive: #d85b33;
+  --tile-correct: #5ba467;
+  --tile-correct-foreground: #fcfcfc;
+  --tile-present: #c9a148;
+  --tile-present-foreground: #272b36;
+  --tile-absent: #65697b;
+  --tile-absent-foreground: #fcfcfc;
+  --tile-selected: #c2d6e5;
+  --tile-selected-foreground: #2c334a;
+  --tile-empty: #f4f2ee;
+  --tile-target: #f0a292;
+  --tile-target-foreground: #3d2722;
+  --radius: 10px;
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+h1,
+h2,
+p,
+strong {
+  margin: 0;
+}
+
 #root {
-  max-width: 1280px;
+  min-height: 100vh;
+}
+
+.shell {
+  position: relative;
+  min-height: 100vh;
+  background-image:
+    linear-gradient(to right, rgba(45, 50, 61, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(45, 50, 61, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.shell--home {
+  width: min(1120px, 100%);
   margin: 0 auto;
-  padding: 2rem;
+  padding: 32px 16px 28px;
+}
+
+.shell--game {
+  width: min(768px, 100%);
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+}
+
+.hero_Inicio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 36px;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.badge_Marca {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #2f4750;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.hero_Inicio h1,
+.titulo_Juego {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.hero_Inicio h1 {
+  font-size: clamp(48px, 8vw, 64px);
+  line-height: 1;
+}
+
+.hero_Inicio p {
+  max-width: 420px;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+.layout_Inicio {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 28px;
+}
+
+.panel,
+.encabezado_Juego,
+.objetivo_Juego,
+.bloque_Principal,
+.modal_Final {
+  background: rgba(253, 252, 250, 0.9);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.panel {
+  padding: 28px;
+}
+
+.panel_Cabecera {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.panel_Cabecera--ranking {
+  justify-content: space-between;
+}
+
+.panel_Cabecera h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.panel_Cabecera p,
+.descripcion,
+.campo small,
+.como_Jugar p,
+.ranking_Item span,
+.ranking_Vacio p,
+.pie_Inicio,
+.marca_Juego span,
+.objetivo_Juego p,
+.modal_Texto,
+.modal_Solucion {
+  color: var(--muted-foreground);
+}
+
+.panel_Icono {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius);
+}
+
+.panel_Icono--teal {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.panel_Icono--coral {
+  background: var(--tile-target);
+  color: var(--tile-target-foreground);
+}
+
+.icono {
+  width: 20px;
+  height: 20px;
+}
+
+.formulario_Juego {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.campo {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo span,
+.campo legend,
+.como_Jugar span,
+.objetivo_Juego span {
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.campo input {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  padding: 0 14px;
+  outline: none;
+}
+
+.campo input:focus,
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.selector_Dificultad {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.chip_Dificultad {
+  min-height: 112px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  padding: 14px;
+  text-align: left;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.chip_Dificultad strong,
+.chip_Dificultad span,
+.chip_Dificultad small {
+  display: block;
+}
+
+.chip_Dificultad span {
+  margin-top: 4px;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.chip_Dificultad small {
+  margin-top: 6px;
+  color: var(--muted-foreground);
+  line-height: 1.35;
+}
+
+.chip_Dificultad--activa {
+  border-color: var(--primary);
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(27, 111, 123, 0.18);
+}
+
+.boton_Principal,
+.boton_Secundario,
+.boton_Icono,
+.boton_Casa,
+.boton_Reiniciar {
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 0 16px;
+  font-weight: 700;
+  transition: transform 120ms ease, background-color 160ms ease, opacity 160ms ease;
+}
+
+.boton_Principal {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.boton_Secundario,
+.boton_Icono,
+.boton_Casa,
+.boton_Reiniciar {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.boton_Principal:hover:not(:disabled),
+.boton_Secundario:hover:not(:disabled),
+.boton_Icono:hover:not(:disabled),
+.boton_Casa:hover:not(:disabled),
+.boton_Reiniciar:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--foreground);
+}
+
+.boton_Principal:active:not(:disabled),
+.boton_Secundario:active:not(:disabled),
+.boton_Icono:active:not(:disabled),
+.boton_Casa:active:not(:disabled),
+.boton_Reiniciar:active:not(:disabled),
+.tecla_Numerica:active:not(:disabled),
+.resultado_Tablero--activo:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.boton_Principal:disabled,
+.boton_Secundario:disabled,
+.boton_Icono:disabled,
+.boton_Casa:disabled,
+.boton_Reiniciar:disabled,
+.tecla_Numerica:disabled,
+.resultado_Tablero:disabled {
+  opacity: 0.45;
+}
+
+.como_Jugar {
+  margin-top: 28px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: rgba(235, 230, 220, 0.45);
+  padding: 16px;
+}
+
+.como_Jugar strong {
+  display: block;
+  margin: 8px 0;
+  font-family: var(--font-mono);
+  color: var(--foreground);
+}
+
+.ranking_Lista {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  list-style: none;
+}
+
+.ranking_Item {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.ranking_Item:last-child {
+  border-bottom: 0;
+}
+
+.ranking_Item:hover {
+  background: rgba(219, 230, 232, 0.45);
+}
+
+.ranking_Item div {
+  min-width: 0;
+}
+
+.ranking_Item div strong,
+.ranking_Item div span {
+  display: block;
+}
+
+.ranking_Item div strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.ranking_Item div span {
+  margin-top: 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.ranking_Posicion {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ranking_Posicion--1 {
+  background: var(--tile-target);
+  color: var(--tile-target-foreground);
+}
+
+.ranking_Posicion--2 {
+  background: var(--tile-present);
+  color: var(--tile-present-foreground);
+}
+
+.ranking_Posicion--3 {
+  background: var(--tile-correct);
+  color: var(--tile-correct-foreground);
+}
+
+.ranking_Puntaje {
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+
+.ranking_Vacio {
+  display: grid;
+  place-items: center;
+  min-height: 260px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: rgba(235, 230, 220, 0.3);
+  text-align: center;
+  padding: 28px;
+}
+
+.ranking_Vacio .icono {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 12px;
+  color: var(--muted-foreground);
+}
+
+.pie_Inicio {
+  margin-top: 36px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.encabezado_Juego {
+  display: grid;
+  grid-template-columns: 112px 1fr 112px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  backdrop-filter: blur(10px);
+}
+
+.boton_Casa,
+.boton_Reiniciar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.marca_Juego {
+  text-align: center;
+}
+
+.titulo_Juego {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.marca_Juego span {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.objetivo_Juego {
+  margin-top: 16px;
+  padding: 14px 16px;
+  text-align: center;
+  border-style: dashed;
+}
+
+.objetivo_Juego span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.objetivo_Juego strong {
+  color: var(--foreground);
+  font-family: var(--font-mono);
+}
+
+.bloque_Principal {
+  margin-top: 18px;
+  padding: 18px 12px 20px;
+}
+
+.alerta_Error {
+  border: 1px solid rgba(216, 91, 51, 0.35);
+  border-radius: var(--radius);
+  background: rgba(216, 91, 51, 0.1);
+  color: #8d3219;
+  padding: 12px 14px;
+  font-weight: 600;
+}
+
+.alerta_Error--centrada {
+  max-width: 560px;
+  margin: 0 auto 16px;
+}
+
+.tablero_Grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.fila_Tablero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.segmento_Fila {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.tablero_Celda,
+.resultado_Tablero {
+  display: grid;
+  place-items: center;
+  height: 64px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+  transition: background-color 160ms ease, transform 120ms ease;
+}
+
+.tablero_Celda {
+  width: 64px;
+  font-size: 28px;
+}
+
+.resultado_Tablero {
+  min-width: 64px;
+  padding: 0 12px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 30px;
+}
+
+button.resultado_Tablero {
+  cursor: pointer;
+}
+
+.resultado_Tablero--activo {
+  border-color: transparent;
+  background: var(--tile-target);
+  color: var(--tile-target-foreground);
+}
+
+.tablero_Celda--empty {
+  background: var(--tile-empty);
+  color: transparent;
+}
+
+.tablero_Celda--filled {
+  border-color: transparent;
+  background: var(--tile-selected);
+  color: var(--tile-selected-foreground);
+  animation: pop-tile 180ms ease-out;
+}
+
+.tablero_Celda--correct {
+  border-color: transparent;
+  background: var(--tile-correct);
+  color: var(--tile-correct-foreground);
+}
+
+.tablero_Celda--present {
+  border-color: transparent;
+  background: var(--tile-present);
+  color: var(--tile-present-foreground);
+}
+
+.tablero_Celda--absent {
+  border-color: transparent;
+  background: var(--tile-absent);
+  color: var(--tile-absent-foreground);
+}
+
+.operador_Tablero {
+  width: 16px;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  user-select: none;
+}
+
+.leyenda_Juego {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 18px;
+  margin: 22px auto 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 12px 14px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.leyenda_Juego span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.swatch--correct {
+  background: var(--tile-correct);
+}
+
+.swatch--present {
+  background: var(--tile-present);
+}
+
+.swatch--absent {
+  background: var(--tile-absent);
+}
+
+.swatch--selected {
+  background: var(--tile-selected);
+  border: 1px solid var(--border);
+}
+
+.teclado_Numerico {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.teclado_Grid {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 8px;
+  width: min(100%, 520px);
+}
+
+.tecla_Numerica {
+  display: grid;
+  place-items: center;
+  min-height: 52px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  transition: transform 120ms ease, background-color 160ms ease, opacity 160ms ease;
+}
+
+.tecla_Numerica--filled {
+  border-color: transparent;
+  background: var(--tile-selected);
+  color: var(--tile-selected-foreground);
+}
+
+.tecla_Numerica--correct {
+  border-color: transparent;
+  background: var(--tile-correct);
+  color: var(--tile-correct-foreground);
+}
+
+.tecla_Numerica--present {
+  border-color: transparent;
+  background: var(--tile-present);
+  color: var(--tile-present-foreground);
+}
+
+.tecla_Numerica--absent {
+  border-color: transparent;
+  background: var(--tile-absent);
+  color: var(--tile-absent-foreground);
+}
+
+.tecla_Numerica--empty:hover:not(:disabled) {
+  background: var(--accent);
+}
+
+.acciones_Teclado,
+.modal_Acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.boton_Principal--teclado,
+.boton_Secundario--teclado {
+  flex: 1;
+  width: min(255px, calc(50vw - 24px));
+  max-width: 255px;
+}
+
+.boton_Principal--teclado {
+  min-width: min(100%, 220px);
+}
+
+.modal_Fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgba(33, 38, 47, 0.45);
+  padding: 16px;
+}
+
+.modal_Final {
+  width: min(440px, 100%);
+  padding: 28px;
+  text-align: center;
+}
+
+.modal_Icono {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.modal_Icono--victoria {
+  background: var(--tile-correct);
+  color: var(--tile-correct-foreground);
+}
+
+.modal_Icono--derrota {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.modal_Final h2 {
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.modal_Texto,
+.modal_Solucion {
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+.modal_Solucion strong {
+  color: var(--foreground);
+  font-family: var(--font-mono);
+}
+
+.modal_Acciones {
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.sr_Only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes pop-tile {
+  0% {
+    transform: scale(0.85);
   }
-  to {
-    transform: rotate(360deg);
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@media (max-width: 860px) {
+  .layout_Inicio {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 22px;
   }
 }
 
-.card {
-  padding: 2em;
+@media (max-width: 700px) {
+  .shell--home {
+    padding-top: 24px;
+  }
+
+  .shell--game {
+    padding-inline: 10px;
+  }
+
+  .encabezado_Juego {
+    grid-template-columns: 48px 1fr 48px;
+    padding: 8px;
+  }
+
+  .boton_Casa,
+  .boton_Reiniciar {
+    width: 44px;
+    padding: 0;
+  }
+
+  .boton_Casa span,
+  .boton_Reiniciar span,
+  .boton_Reiniciar {
+    font-size: 0;
+  }
+
+  .boton_Casa .icono,
+  .boton_Reiniciar .icono {
+    width: 20px;
+    height: 20px;
+  }
+
+  .fila_Tablero,
+  .segmento_Fila {
+    gap: 5px;
+  }
+
+  .tablero_Celda {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+
+  .resultado_Tablero {
+    min-width: 56px;
+    height: 48px;
+    padding: 0 8px;
+    font-size: 22px;
+  }
+
+  .operador_Tablero {
+    width: 10px;
+    font-size: 18px;
+  }
+
+  .teclado_Grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
-.read-the-docs {
-  color: #888;
+@media (max-width: 480px) {
+  .selector_Dificultad {
+    grid-template-columns: 1fr;
+  }
+
+  .panel_Cabecera--ranking {
+    align-items: flex-start;
+  }
+
+  .panel_Cabecera--ranking .boton_Icono {
+    padding-inline: 10px;
+  }
+
+  .bloque_Principal {
+    padding-inline: 8px;
+  }
+
+  .fila_Tablero,
+  .segmento_Fila {
+    gap: 3px;
+  }
+
+  .tablero_Celda {
+    width: 39px;
+    height: 42px;
+    font-size: 18px;
+  }
+
+  .resultado_Tablero {
+    min-width: 48px;
+    height: 42px;
+    font-size: 18px;
+  }
+
+  .operador_Tablero {
+    width: 8px;
+    font-size: 15px;
+  }
 }
