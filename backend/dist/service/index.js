@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FactoryPartida = exports.JugadorDAO = exports.PartidaDAO = exports.SingletonSupabase = exports.juego_Logica = void 0;
+var MotorPartida_1 = require("./MotorPartida");
+Object.defineProperty(exports, "juego_Logica", { enumerable: true, get: function () { return MotorPartida_1.juego_Logica; } });
+var singleton_Supabase_1 = require("./singleton_Supabase");
+Object.defineProperty(exports, "SingletonSupabase", { enumerable: true, get: function () { return singleton_Supabase_1.SingletonSupabase; } });
+var PartidaDAO_1 = require("./dao/PartidaDAO");
+Object.defineProperty(exports, "PartidaDAO", { enumerable: true, get: function () { return PartidaDAO_1.PartidaDAO; } });
+var JugadorDAO_1 = require("./dao/JugadorDAO");
+Object.defineProperty(exports, "JugadorDAO", { enumerable: true, get: function () { return JugadorDAO_1.JugadorDAO; } });
+var FactoryPartida_1 = require("./factory/FactoryPartida");
+Object.defineProperty(exports, "FactoryPartida", { enumerable: true, get: function () { return FactoryPartida_1.FactoryPartida; } });

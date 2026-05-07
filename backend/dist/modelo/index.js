@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DificultadNormal = exports.DificultadDificil = exports.Jugador = exports.Partida = void 0;
+var Partida_1 = require("./Partida");
+Object.defineProperty(exports, "Partida", { enumerable: true, get: function () { return Partida_1.Partida; } });
+var Jugador_1 = require("./Jugador");
+Object.defineProperty(exports, "Jugador", { enumerable: true, get: function () { return Jugador_1.Jugador; } });
+var strategy_1 = require("./strategy");
+Object.defineProperty(exports, "DificultadDificil", { enumerable: true, get: function () { return strategy_1.DificultadDificil; } });
+Object.defineProperty(exports, "DificultadNormal", { enumerable: true, get: function () { return strategy_1.DificultadNormal; } });
