@@ -3,7 +3,7 @@ services:
     name: ooodle-game
     runtime: node
     plan: free
-    buildCommand: npm --prefix backend ci && npm --prefix backend run build
+    buildCommand: npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend ci && npm --prefix backend run build
     startCommand: npm --prefix backend start
     healthCheckPath: /api/health
     envVars:
@@ -12,4 +12,8 @@ services:
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_PUBLISHABLE_KEY
         sync: false
