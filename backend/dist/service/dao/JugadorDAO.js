@@ -65,7 +65,7 @@ class JugadorDAO {
         this.idJugadorPorNombre.set(normalizado, jugador.getIdJugador());
         return jugador;
     }
-    async listar() {
+    async listarJugador() {
         if (this.supabaseClient === null) {
             return Array.from(this.jugadoresPorId.values());
         }

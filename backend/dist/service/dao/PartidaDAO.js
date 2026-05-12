@@ -73,31 +73,61 @@ class PartidaDAO {
     // Obtener ranking de partidas
     async obtenerRankingPartidas() {
         if (this.supabaseClient === null) {
-            return Array.from(this.partidasLocales.values()).map((p) => ({
+            return this.agruparRanking(Array.from(this.partidasLocales.values()).map((p) => ({
                 nombre_jugador: p.getJugador().getNombre(),
                 puntaje: p.getPuntaje(),
                 intentos_usados: p.getIntentosJugador(),
                 estado: p.getEstado(),
                 created_at: new Date().toISOString(),
                 finished_at: new Date().toISOString(),
-            }));
+            })));
         }
         const { data, error } = await this.supabaseClient
             .from(TABLA_PARTIDAS)
             .select("puntaje, intentos_usados, estado, created_at, finished_at, usuarios(nombre_jugador)")
-            .order("puntaje", { ascending: false })
-            .limit(10);
+            .order("finished_at", { ascending: false })
+            .limit(500);
         if (error) {
             throw new Error(`No se pudo consultar el ranking: ${error.message}`);
         }
-        return (data ?? []).map((r) => ({
+        return this.agruparRanking((data ?? []).map((r) => ({
             nombre_jugador: this.obtenerNombreJugador(r),
             puntaje: r.puntaje ?? 0,
             intentos_usados: r.intentos_usados ?? 0,
             estado: r.estado ?? "abandonada",
             created_at: r.created_at ?? "",
             finished_at: r.finished_at ?? "",
-        }));
+        })));
+    }
+    agruparRanking(registros) {
+        const acumulado = new Map();
+        for (const registro of registros) {
+            const clave = registro.nombre_jugador.trim().toLowerCase();
+            const existente = acumulado.get(clave);
+            if (!existente) {
+                acumulado.set(clave, {
+                    ...registro,
+                    estado: "acumulado",
+                    partidas_jugadas: 1,
+                    mejor_partida: registro.puntaje,
+                });
+                continue;
+            }
+            existente.puntaje += registro.puntaje;
+            existente.intentos_usados += registro.intentos_usados;
+            existente.partidas_jugadas += 1;
+            existente.mejor_partida = Math.max(existente.mejor_partida, registro.puntaje);
+            if (registro.finished_at > existente.finished_at) {
+                existente.finished_at = registro.finished_at;
+            }
+        }
+        return Array.from(acumulado.values())
+            .sort((a, b) => {
+            if (b.puntaje !== a.puntaje)
+                return b.puntaje - a.puntaje;
+            return b.mejor_partida - a.mejor_partida;
+        })
+            .slice(0, 10);
     }
     obtenerNombreJugador(registro) {
         const usuario = Array.isArray(registro.usuarios)

@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.juego_Logica = void 0;
+exports.juego_Logica = exports.MotorPartida = void 0;
 const PartidaDAO_1 = require("./dao/PartidaDAO");
 const JugadorDAO_1 = require("./dao/JugadorDAO");
 const FactoryPartida_1 = require("./factory/FactoryPartida");
 const Jugador_1 = require("../modelo/Jugador");
 const singleton_Supabase_1 = require("./singleton_Supabase");
-class juego_Logica {
+class MotorPartida {
     partida;
     jugador;
     partidaDAO;
@@ -42,7 +42,7 @@ class juego_Logica {
         this.score_Guardado = false;
         this.puntaje_Aplicado = false;
     }
-    validar_Operacion_Jugador(operacion) {
+    async validar_Operacion_Jugador(operacion) {
         const partida_Actual = this.obtener_Partida_Activa();
         const operacion_Normalizada = this.normalizar_Operacion(operacion);
         const numeros_Jugador = this.extraer_Numeros_Operacion(operacion_Normalizada);
@@ -61,6 +61,7 @@ class juego_Logica {
         };
         if (partida_Actual.esTerminado()) {
             respuesta.solucion = numeros_Secretos;
+            await this.guardar_Score();
         }
         return JSON.stringify(respuesta);
     }
@@ -175,4 +176,5 @@ class juego_Logica {
         return retroalimentacion;
     }
 }
-exports.juego_Logica = juego_Logica;
+exports.MotorPartida = MotorPartida;
+exports.juego_Logica = MotorPartida;

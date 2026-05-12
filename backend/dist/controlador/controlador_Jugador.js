@@ -52,7 +52,7 @@ class controlador_Jugador {
     };
     listarJugadores = async (c) => {
         try {
-            const jugadores = await this.jugadorDAO.listar();
+            const jugadores = await this.jugadorDAO.listarJugador();
             return c.json(jugadores.map((j) => ({
                 idJugador: j.getIdJugador(),
                 nombreJugador: j.getNombre(),

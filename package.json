@@ -6,9 +6,16 @@
     "build": "npm --prefix frontend install && npm --prefix frontend run build && npm --prefix backend install && npm --prefix backend run build",
     "start": "npm --prefix backend start",
     "check": "npm --prefix backend run check && npm --prefix frontend run check",
-    "lint": "npm --prefix frontend run lint"
+    "lint": "npm --prefix frontend run lint",
+    "dev:frontend": "npm --prefix frontend run dev -- --host localhost",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "node scripts/run-cypress-e2e.mjs"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "cypress": "^15.4.0"
   }
 }

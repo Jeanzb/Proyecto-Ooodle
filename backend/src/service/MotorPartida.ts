@@ -81,7 +81,7 @@ export class MotorPartida {
     this.puntaje_Aplicado = false;
   }
 
-  public validar_Operacion_Jugador(operacion: string): string {
+  public async validar_Operacion_Jugador(operacion: string): Promise<string> {
     const partida_Actual = this.obtener_Partida_Activa();
     const operacion_Normalizada = this.normalizar_Operacion(operacion);
     const numeros_Jugador = this.extraer_Numeros_Operacion(operacion_Normalizada);
@@ -107,6 +107,7 @@ export class MotorPartida {
 
     if (partida_Actual.esTerminado()) {
       respuesta.solucion = numeros_Secretos;
+      await this.guardar_Score();
     }
 
     return JSON.stringify(respuesta);
@@ -259,3 +260,5 @@ export class MotorPartida {
     return retroalimentacion;
   }
 }
+
+export { MotorPartida as juego_Logica };

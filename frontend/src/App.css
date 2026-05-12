@@ -36,6 +36,10 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: var(--background);
+  background-image:
+    linear-gradient(to right, rgba(45, 50, 61, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(45, 50, 61, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
   color: var(--foreground);
   font-family: var(--font-sans);
 }
@@ -67,10 +71,7 @@ strong {
 .shell {
   position: relative;
   min-height: 100vh;
-  background-image:
-    linear-gradient(to right, rgba(45, 50, 61, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(45, 50, 61, 0.05) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background: transparent;
 }
 
 .shell--home {
@@ -758,56 +759,246 @@ button.resultado_Tablero {
   z-index: 20;
   display: grid;
   place-items: center;
-  background: rgba(33, 38, 47, 0.45);
+  background: rgba(33, 38, 47, 0.28);
+  backdrop-filter: blur(8px) saturate(0.92);
   padding: 16px;
 }
 
 .modal_Final {
-  width: min(440px, 100%);
-  padding: 28px;
+  position: relative;
+  width: min(480px, 100%);
+  overflow: hidden;
+  padding: 30px 28px 26px;
   text-align: center;
+  box-shadow: 0 24px 70px rgba(45, 50, 61, 0.24);
 }
 
-.modal_Icono {
+.modal_Final--victoria {
+  width: min(440px, 100%);
+  padding: 38px 30px 28px;
+  background: rgba(253, 252, 250, 0.98);
+}
+
+.modal_Barra {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 8px;
+}
+
+.modal_Final--victoria .modal_Barra {
+  background: var(--primary);
+}
+
+.modal_Final--derrota .modal_Barra {
+  background: var(--destructive);
+}
+
+.modal_Cabecera {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.modal_IconoVictoria {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 14px;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 6px;
+  border: 2px solid rgba(27, 111, 123, 0.28);
   border-radius: 999px;
-  font-family: var(--font-mono);
-  font-weight: 700;
+  background: rgba(27, 111, 123, 0.08);
+  color: var(--primary);
 }
 
-.modal_Icono--victoria {
-  background: var(--tile-correct);
-  color: var(--tile-correct-foreground);
+.modal_IconoVictoria .icono {
+  width: 30px;
+  height: 30px;
 }
 
-.modal_Icono--derrota {
+.modal_Estado {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 999px;
+  padding: 0 12px;
   background: var(--muted);
   color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.modal_Final--victoria .modal_Estado {
+  min-height: 26px;
+  border: 1px solid rgba(27, 111, 123, 0.26);
+  background: rgba(27, 111, 123, 0.08);
+  color: var(--primary);
+}
+
+.modal_Final--derrota .modal_Estado {
+  background: rgba(216, 91, 51, 0.12);
+  color: #9b3b20;
 }
 
 .modal_Final h2 {
-  font-size: 28px;
+  font-size: 26px;
   line-height: 1.2;
 }
 
-.modal_Texto,
-.modal_Solucion {
-  margin-top: 10px;
+.modal_Final--victoria h2 {
+  color: #171923;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 27px;
+  font-weight: 700;
+}
+
+.modal_Texto {
+  max-width: 390px;
   line-height: 1.5;
 }
 
-.modal_Solucion strong {
+.modal_Final--victoria .modal_Texto {
+  max-width: 330px;
+  color: #4f5669;
+  font-size: 13px;
+}
+
+.modal_BloqueResultado {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.modal_Ecuacion {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.modal_Ecuacion--victoria {
+  border: 1px solid rgba(27, 111, 123, 0.22);
+  border-radius: var(--radius);
+  background: rgba(27, 111, 123, 0.1);
+  color: var(--primary);
+  padding: 20px 16px;
+  font-size: 22px;
+}
+
+.modal_Ecuacion--derrota {
+  color: var(--muted-foreground);
+  font-size: 14px;
+}
+
+.modal_Metricas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.modal_Final--victoria .modal_Metricas {
+  margin-top: 6px;
+}
+
+.modal_Metrica {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(235, 230, 220, 0.32);
+  padding: 14px 8px 12px;
+}
+
+.modal_Final--victoria .modal_Metrica {
+  min-height: 92px;
+  border-color: #e3dccf;
+  background: rgba(246, 242, 234, 0.58);
+}
+
+.modal_MetricaEtiqueta,
+.modal_Subtitulo {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.modal_MetricaIcono {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: #9aa0b5;
+}
+
+.modal_MetricaSvg,
+.modal_MetricaIcono .icono {
+  width: 18px;
+  height: 18px;
+}
+
+.modal_Metrica strong {
   color: var(--foreground);
   font-family: var(--font-mono);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.modal_Metrica--ranking strong {
+  color: var(--primary);
+}
+
+.modal_Texto--ranking {
+  justify-self: center;
+  border-radius: var(--radius);
+  background: rgba(219, 230, 232, 0.52);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.modal_Texto--guardado {
+  justify-self: center;
+  color: #35663e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.modal_CeldasSolucion {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.modal_CeldaSolucion {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  background: var(--tile-correct);
+  color: var(--tile-correct-foreground);
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  box-shadow: inset 0 -3px 0 rgba(45, 50, 61, 0.12);
 }
 
 .modal_Acciones {
   flex-wrap: wrap;
   margin-top: 22px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.modal_Acciones .boton_Principal,
+.modal_Acciones .boton_Secundario {
+  min-width: 142px;
 }
 
 .sr_Only {

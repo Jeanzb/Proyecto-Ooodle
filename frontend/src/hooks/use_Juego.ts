@@ -67,11 +67,11 @@ function crear_Usuario_Desde_Juego(
 
 function obtener_Mensaje_Estado(juego: Juego): string {
   if (juego.get_estatus_Juego() === "ganado") {
-    return "Completaste la ecuacion. Puedes guardar el puntaje o iniciar una nueva partida.";
+    return "Completaste la ecuacion. El resultado se guardo automaticamente en el ranking.";
   }
 
   if (juego.get_estatus_Juego() === "perdido") {
-    return "Se agotaron los intentos. Guarda el resultado o vuelve a intentarlo.";
+    return "Se agotaron los intentos. El resultado se guardo automaticamente en el historial.";
   }
 
   return "Selecciona cuatro numeros, revisa las pistas de color y encuentra el orden correcto.";
@@ -371,8 +371,16 @@ export function useJuego(
         construir_Intento(juego_Actualizado),
       ]);
       set_Seleccion_Actual([]);
+      const partida_Finalizada_Actual = es_Partida_Finalizada(juego_Actualizado);
+
+      set_Puntaje_Guardado(partida_Finalizada_Actual);
       set_Mensaje(obtener_Mensaje_Estado(juego_Actualizado));
-      set_Modal_Visible(es_Partida_Finalizada(juego_Actualizado));
+
+      if (partida_Finalizada_Actual) {
+        await cargar_Ranking();
+      }
+
+      set_Modal_Visible(partida_Finalizada_Actual);
     } catch (error_Actual) {
       set_Error(
         error_Actual instanceof Error
@@ -382,7 +390,7 @@ export function useJuego(
     } finally {
       set_Cargando(false);
     }
-  }, [juego, seleccion_Actual, usuario, vista]);
+  }, [cargar_Ranking, juego, seleccion_Actual, usuario, vista]);
 
   async function guardar_Puntaje(): Promise<void> {
     if (usuario === null) {

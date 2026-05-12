@@ -22,6 +22,8 @@ type ranking_Registro = {
   puntaje: number;
   intentos_usados: number;
   estado: string;
+  partidas_jugadas?: number;
+  mejor_partida?: number;
   created_at?: string;
   finished_at?: string;
 };

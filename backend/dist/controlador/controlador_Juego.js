@@ -34,7 +34,7 @@ class controlador_Juego {
         try {
             const body = await c.req.json();
             const operacion = String(body?.operacion ?? "");
-            const respuesta = JSON.parse(this.juego_Logica.validar_Operacion_Jugador(operacion));
+            const respuesta = JSON.parse(await this.juego_Logica.validar_Operacion_Jugador(operacion));
             return c.json(respuesta, 200);
         }
         catch (error) {

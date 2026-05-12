@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 import { useJuego, useRanking } from "../hooks";
 import { juego_Vista } from "./juego_Vista";
@@ -41,6 +41,23 @@ function Icono_Trofeo() {
   );
 }
 
+function Icono_Estrella() {
+  return (
+    <svg aria-hidden="true" className="modal_MetricaSvg" fill="none" viewBox="0 0 24 24">
+      <path d="m12 3 2.4 5.6 6.1.5-4.6 4 1.4 5.9-5.3-3.1L6.7 19l1.4-5.9-4.6-4 6.1-.5L12 3Z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.7" />
+    </svg>
+  );
+}
+
+function Icono_Barras() {
+  return (
+    <svg aria-hidden="true" className="modal_MetricaSvg" fill="none" viewBox="0 0 24 24">
+      <path d="M7 19V11M12 19V5M17 19v-8" stroke="currentColor" strokeLinecap="round" strokeWidth="1.9" />
+      <path d="M5 19h14" stroke="currentColor" strokeLinecap="round" strokeWidth="1.7" />
+    </svg>
+  );
+}
+
 function Icono_Reiniciar() {
   return (
     <svg aria-hidden="true" className="icono" fill="none" viewBox="0 0 24 24">
@@ -62,8 +79,6 @@ export function JuegoVistaPantalla() {
     mensaje,
     error,
     cargando,
-    guardando,
-    puntaje_Guardado,
     modal_Visible,
     filas_Tablero,
     numeros_Teclado,
@@ -80,13 +95,37 @@ export function JuegoVistaPantalla() {
     eliminar_Numero,
     limpiar_Seleccion,
     revisar_Intento,
-    guardar_Puntaje,
   } = useJuego(vista, cargar_Ranking);
 
   function on_Submit_Inicio(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     void iniciar_Partida();
   }
+
+  const es_Victoria = juego?.get_estatus_Juego() === "ganado";
+  const es_Derrota = juego?.get_estatus_Juego() === "perdido";
+  const solucion = juego?.get_solucion() ?? [];
+  const ecuacion_Solucion = juego?.get_solucion_Formateada() ?? "";
+  const puntaje_Actual = juego?.get_puntaje() ?? 0;
+  const nombre_Jugador_Actual = usuario?.get_nombre_Usuario().trim().toLowerCase() ?? "";
+  const indice_Ranking_Jugador = ranking_Diferido.findIndex(
+    (registro) => registro.nombre_jugador.trim().toLowerCase() === nombre_Jugador_Actual,
+  );
+  const registro_Ranking_Jugador =
+    indice_Ranking_Jugador >= 0 ? ranking_Diferido[indice_Ranking_Jugador] : null;
+  const total_Acumulado = registro_Ranking_Jugador?.puntaje ?? puntaje_Actual;
+  const posicion_Ranking =
+    indice_Ranking_Jugador >= 0
+      ? indice_Ranking_Jugador + 1
+      : total_Acumulado > 0
+        ? ranking_Diferido.filter((registro) => registro.puntaje > total_Acumulado).length + 1
+      : null;
+
+  useEffect(() => {
+    if (modal_Visible) {
+      void cargar_Ranking();
+    }
+  }, [modal_Visible, cargar_Ranking]);
 
   if (pantalla_Actual === "inicio") {
     return (
@@ -119,7 +158,7 @@ export function JuegoVistaPantalla() {
                   maxLength={24}
                   autoComplete="off"
                 />
-                <small>Este nombre aparecera en el ranking cuando guardes el puntaje.</small>
+                <small>Este nombre aparecera en el ranking cuando termine la partida.</small>
               </label>
 
               <fieldset className="campo">
@@ -177,7 +216,7 @@ export function JuegoVistaPantalla() {
               </span>
               <div>
                 <h2 id="ranking-title">Ranking</h2>
-                <p>Mejores puntajes guardados.</p>
+                <p>Puntajes acumulados por jugador.</p>
               </div>
               <button
                 className="boton_Icono"
@@ -195,7 +234,7 @@ export function JuegoVistaPantalla() {
               <div className="ranking_Vacio">
                 <Icono_Trofeo />
                 <strong>Aun no hay puntajes</strong>
-                <p>Gana una partida y guarda tu resultado para aparecer aqui.</p>
+                <p>Termina una partida para aparecer aqui.</p>
               </div>
             ) : (
               <ol className="ranking_Lista">
@@ -207,7 +246,7 @@ export function JuegoVistaPantalla() {
                     <div>
                       <strong>{registro.nombre_jugador}</strong>
                       <span>
-                        {registro.estado} · {registro.intentos_usados}/6 intentos
+                        {registro.partidas_jugadas ?? 1} partidas · {registro.intentos_usados} intentos
                       </span>
                     </div>
                     <strong className="ranking_Puntaje">{registro.puntaje}</strong>
@@ -218,9 +257,6 @@ export function JuegoVistaPantalla() {
           </aside>
         </div>
 
-        <footer className="pie_Inicio">
-          Inspirado en Wordle · Creado para entrenar la mente
-        </footer>
       </main>
     );
   }
@@ -371,30 +407,84 @@ export function JuegoVistaPantalla() {
 
       {modal_Visible && juego !== null ? (
         <div className="modal_Fondo" role="presentation">
-          <div className="modal_Final" role="dialog" aria-modal="true">
-            <div
-              className={
-                juego.get_estatus_Juego() === "ganado"
-                  ? "modal_Icono modal_Icono--victoria"
-                  : "modal_Icono modal_Icono--derrota"
-              }
-            >
-              {juego.get_estatus_Juego() === "ganado" ? "OK" : "X"}
+          <div
+            className={
+              es_Victoria
+                ? "modal_Final modal_Final--victoria"
+                : "modal_Final modal_Final--derrota"
+            }
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-final-titulo"
+          >
+            <div className="modal_Barra" aria-hidden="true" />
+
+            <div className="modal_Cabecera">
+              {es_Victoria ? (
+                <span className="modal_IconoVictoria">
+                  <Icono_Trofeo />
+                </span>
+              ) : null}
+
+              <span className="modal_Estado">{es_Victoria ? "✓ Victoria" : "Derrota"}</span>
+              <h2 id="modal-final-titulo">
+                {es_Victoria ? "Ecuacion resuelta" : "Se acabaron los intentos"}
+              </h2>
+              <p className="modal_Texto">
+                {es_Victoria
+                  ? "Buen cierre. Tu resultado ya quedo guardado y sumado al ranking."
+                  : "Esta era la combinacion correcta. Mira los numeros y vuelve a intentarlo cuando quieras."}
+              </p>
             </div>
-            <h2>{juego.get_estatus_Juego() === "ganado" ? "Lo resolviste" : "Sin intentos"}</h2>
-            <p className="modal_Texto">{mensaje}</p>
-            <p className="modal_Solucion">
-              Solucion: <strong>{juego.get_solucion_Formateada()}</strong>
-            </p>
+
+            {es_Victoria ? (
+              <section className="modal_BloqueResultado" aria-label="Resumen de victoria">
+                <p className="modal_Ecuacion modal_Ecuacion--victoria">{ecuacion_Solucion}</p>
+
+                <div className="modal_Metricas">
+                  <div className="modal_Metrica">
+                    <span className="modal_MetricaIcono">
+                      <Icono_Estrella />
+                    </span>
+                    <strong>{puntaje_Actual}</strong>
+                    <span className="modal_MetricaEtiqueta">Partida</span>
+                  </div>
+                  <div className="modal_Metrica">
+                    <span className="modal_MetricaIcono">
+                      <Icono_Barras />
+                    </span>
+                    <strong>{total_Acumulado}</strong>
+                    <span className="modal_MetricaEtiqueta">Total</span>
+                  </div>
+                  <div className="modal_Metrica modal_Metrica--ranking">
+                    <span className="modal_MetricaIcono">
+                      <Icono_Trofeo />
+                    </span>
+                    <strong>{posicion_Ranking !== null ? `#${posicion_Ranking}` : "-"}</strong>
+                    <span className="modal_MetricaEtiqueta">Ranking</span>
+                  </div>
+                </div>
+              </section>
+            ) : null}
+
+            {es_Derrota ? (
+              <section className="modal_BloqueResultado" aria-label="Solucion correcta">
+                <span className="modal_Subtitulo">Solucion correcta</span>
+                <div className="modal_CeldasSolucion">
+                  {solucion.map((numero, indice) => (
+                    <span className="modal_CeldaSolucion" key={`${numero}-${indice}`}>
+                      {numero}
+                    </span>
+                  ))}
+                </div>
+                <p className="modal_Ecuacion modal_Ecuacion--derrota">{ecuacion_Solucion}</p>
+                <p className="modal_Texto modal_Texto--guardado">
+                  Resultado guardado automaticamente. Esta partida tambien queda en tu historial.
+                </p>
+              </section>
+            ) : null}
+
             <div className="modal_Acciones">
-              <button
-                className="boton_Secundario"
-                type="button"
-                onClick={() => void guardar_Puntaje()}
-                disabled={guardando || puntaje_Guardado}
-              >
-                {puntaje_Guardado ? "Puntaje guardado" : "Guardar puntaje"}
-              </button>
               <button
                 className="boton_Principal"
                 type="button"
@@ -403,6 +493,14 @@ export function JuegoVistaPantalla() {
               >
                 Jugar de nuevo
               </button>
+
+              <button
+                className="boton_Secundario"
+                type="button"
+                onClick={volver_A_Inicio}
+              >
+                Volver al inicio
+              </button>
             </div>
           </div>
         </div>
@@ -410,3 +508,4 @@ export function JuegoVistaPantalla() {
     </main>
   );
 }
+

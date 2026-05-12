@@ -42,7 +42,7 @@ export class controlador_Juego {
       const body = await c.req.json();
       const operacion = String(body?.operacion ?? "");
       const respuesta = JSON.parse(
-        this.juego_Logica.validar_Operacion_Jugador(operacion),
+        await this.juego_Logica.validar_Operacion_Jugador(operacion),
       );
 
       return c.json(respuesta, 200);
