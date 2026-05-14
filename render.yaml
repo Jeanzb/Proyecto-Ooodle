@@ -5,7 +5,7 @@ services:
     plan: free
     buildCommand: npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend ci && npm --prefix backend run build
     startCommand: npm --prefix backend start
-    healthCheckPath: /api/health
+    healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_VERSION
         value: "20"

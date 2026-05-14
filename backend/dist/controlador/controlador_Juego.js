@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.controlador_Juego = void 0;
-const MotorPartida_1 = require("../service/MotorPartida");
+const MotorPartida_1 = require("./MotorPartida");
 class controlador_Juego {
     juego_Logica;
     constructor() {

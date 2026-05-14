@@ -28,6 +28,8 @@ type ranking_Registro = {
   finished_at?: string;
 };
 
+const API_VERSION_PREFIX = "/api/v1";
+
 export class game_Service {
   private supabaseService: supabase_Service;
   private base_Url: string;
@@ -45,7 +47,7 @@ export class game_Service {
     dificultad: dificultad_Juego,
   ): Promise<{ juego: Juego; usuario: Usuario; mensaje: string }> {
     const respuesta = await this.consumir_Api<inicio_Juego_Response>(
-      "/api/juego/iniciar",
+      `${API_VERSION_PREFIX}/juego/iniciar`,
       {
         method: "POST",
         body: JSON.stringify({
@@ -71,7 +73,7 @@ export class game_Service {
 
   public async obtener_Estado(): Promise<Juego> {
     const respuesta = await this.consumir_Api<estado_Juego_Backend>(
-      "/api/juego/estado",
+      `${API_VERSION_PREFIX}/juego/estado`,
     );
 
     return Juego.desde_Estado_Backend(respuesta);
@@ -79,7 +81,7 @@ export class game_Service {
 
   public async enviar_Respuesta(operacion: string): Promise<Juego> {
     const respuesta = await this.consumir_Api<respuesta_Validacion_Backend>(
-      "/api/juego/validar",
+      `${API_VERSION_PREFIX}/juego/validar`,
       {
         method: "POST",
         body: JSON.stringify({ operacion }),
@@ -94,13 +96,13 @@ export class game_Service {
       throw new Error("No hay un usuario valido para guardar el puntaje.");
     }
 
-    await this.consumir_Api<{ mensaje: string }>("/api/juego/guardar-score", {
+    await this.consumir_Api<{ mensaje: string }>(`${API_VERSION_PREFIX}/juego/guardar-score`, {
       method: "POST",
     });
   }
 
   public async obtener_Ranking(): Promise<ranking_Registro[]> {
-    return this.consumir_Api<ranking_Registro[]>("/api/juego/ranking");
+    return this.consumir_Api<ranking_Registro[]>(`${API_VERSION_PREFIX}/juego/ranking`);
   }
 
   public async obtener_Puntaje_Usuario(id: string): Promise<number> {

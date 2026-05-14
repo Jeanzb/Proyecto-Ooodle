@@ -1,9 +1,9 @@
-import { PartidaDAO } from "./dao/PartidaDAO";
-import { JugadorDAO } from "./dao/JugadorDAO";
-import { FactoryPartida, type TipoDificultad } from "./factory/FactoryPartida";
+import { PartidaDAO } from "../service/dao/PartidaDAO";
+import { JugadorDAO } from "../service/dao/JugadorDAO";
+import { FactoryPartida, type TipoDificultad } from "../service/factory/FactoryPartida";
 import { Partida } from "../modelo/Partida";
 import { Jugador } from "../modelo/Jugador";
-import { SingletonSupabase } from "./singleton_Supabase";
+import { SingletonSupabase } from "../service/singleton_Supabase";
 
 type estado_Publico_Juego = {
   id_Jugador: number;

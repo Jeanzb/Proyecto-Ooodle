@@ -15,23 +15,6 @@ dotenv_1.default.config({ quiet: true });
 const app = new hono_1.Hono();
 exports.app = app;
 app.use((0, cors_1.cors)());
-app.get("/", (c) => {
-    return c.json({
-        mensaje: "Backend de Ooodle activo.",
-        endpoints: [
-            "GET /api/health",
-            "POST /api/juego/iniciar",
-            "GET /api/juego/estado",
-            "POST /api/juego/validar",
-            "POST /api/juego/guardar-score",
-            "GET /api/juego/ranking",
-            "POST /api/jugadores",
-            "GET /api/jugadores",
-            "GET /api/jugadores/:id",
-            "POST /api/jugadores/:id/puntaje",
-        ],
-    });
-});
 app.route("/", routes_1.AppRoutes.router);
 const frontendDist = (0, node_path_1.join)(process.cwd(), "..", "frontend", "dist");
 if ((0, node_fs_1.existsSync)(frontendDist)) {
@@ -45,3 +28,22 @@ if ((0, node_fs_1.existsSync)(frontendDist)) {
         path: (0, node_path_1.join)(frontendDist, "index.html"),
     }));
 }
+app.get("/", (c) => {
+    return c.json({
+        mensaje: "Backend de Ooodle activo.",
+        apiVersion: "v1",
+        endpoints: [
+            "GET /api/v1/health",
+            "POST /api/v1/juego/iniciar",
+            "GET /api/v1/juego/estado",
+            "POST /api/v1/juego/validar",
+            "POST /api/v1/juego/guardar-score",
+            "GET /api/v1/juego/ranking",
+            "POST /api/v1/jugadores",
+            "GET /api/v1/jugadores",
+            "GET /api/v1/jugadores/:id",
+            "POST /api/v1/jugadores/:id/puntaje",
+        ],
+        legacyEndpoints: "Las rutas /api/... siguen disponibles como alias temporal de /api/v1/...",
+    });
+});

@@ -1,4 +1,3 @@
-export { juego_Logica } from "./MotorPartida";
 export { SingletonSupabase } from "./singleton_Supabase";
 export { PartidaDAO } from "./dao/PartidaDAO";
 export { JugadorDAO } from "./dao/JugadorDAO";

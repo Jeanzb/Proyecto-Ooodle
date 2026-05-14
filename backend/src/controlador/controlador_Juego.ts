@@ -1,6 +1,6 @@
 import { Context } from "hono";
 
-import { juego_Logica } from "../service/MotorPartida";
+import { juego_Logica } from "./MotorPartida";
 
 export class controlador_Juego {
   private juego_Logica: juego_Logica;

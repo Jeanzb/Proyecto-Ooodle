@@ -43,18 +43,20 @@ if (existsSync(frontendDist)) {
 app.get("/", (c) => {
   return c.json({
     mensaje: "Backend de Ooodle activo.",
+    apiVersion: "v1",
     endpoints: [
-      "GET /api/health",
-      "POST /api/juego/iniciar",
-      "GET /api/juego/estado",
-      "POST /api/juego/validar",
-      "POST /api/juego/guardar-score",
-      "GET /api/juego/ranking",
-      "POST /api/jugadores",
-      "GET /api/jugadores",
-      "GET /api/jugadores/:id",
-      "POST /api/jugadores/:id/puntaje",
+      "GET /api/v1/health",
+      "POST /api/v1/juego/iniciar",
+      "GET /api/v1/juego/estado",
+      "POST /api/v1/juego/validar",
+      "POST /api/v1/juego/guardar-score",
+      "GET /api/v1/juego/ranking",
+      "POST /api/v1/jugadores",
+      "GET /api/v1/jugadores",
+      "GET /api/v1/jugadores/:id",
+      "POST /api/v1/jugadores/:id/puntaje",
     ],
+    legacyEndpoints: "Las rutas /api/... siguen disponibles como alias temporal de /api/v1/...",
   });
 });
 

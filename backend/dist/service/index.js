@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FactoryPartida = exports.JugadorDAO = exports.PartidaDAO = exports.SingletonSupabase = exports.juego_Logica = void 0;
-var MotorPartida_1 = require("./MotorPartida");
-Object.defineProperty(exports, "juego_Logica", { enumerable: true, get: function () { return MotorPartida_1.juego_Logica; } });
+exports.FactoryPartida = exports.JugadorDAO = exports.PartidaDAO = exports.SingletonSupabase = void 0;
 var singleton_Supabase_1 = require("./singleton_Supabase");
 Object.defineProperty(exports, "SingletonSupabase", { enumerable: true, get: function () { return singleton_Supabase_1.SingletonSupabase; } });
 var PartidaDAO_1 = require("./dao/PartidaDAO");
